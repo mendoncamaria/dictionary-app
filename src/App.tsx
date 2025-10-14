@@ -1,8 +1,8 @@
-import React, { useState, type JSX } from 'react';
+import { useState, type JSX } from 'react';
 import Axios from 'axios';
 import './App.css';
-import { FaSearch } from 'react-icons/fa';
 import { FcSpeaker } from 'react-icons/fc';
+import Search from './components/Search';
 
 // Define interfaces for the API response structure
 interface Definition {
@@ -64,24 +64,7 @@ function App(): JSX.Element {
   return (
     <div className="App">
       <h1>Free Dictionary</h1>
-      <div className="searchBox">
-        {/* Taking user input */}
-        <input
-          type="text"
-          placeholder="Search..."
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            // Specify event type
-            setSearchWord(e.target.value);
-          }}
-        />
-        <button
-          onClick={() => {
-            getMeaning();
-          }}
-        >
-          <FaSearch size="20px" />
-        </button>
-      </div>
+      <Search setSearchWord={setSearchWord} getMeaning={getMeaning} />
       {data && ( // Render only if data is not null
         <div className="showResults">
           <h2>
