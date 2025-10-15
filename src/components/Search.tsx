@@ -1,23 +1,34 @@
-import { FaSearch } from "react-icons/fa";
+import { FaSearch } from 'react-icons/fa';
 
-function Search({ setSearchWord, getMeaning }: { setSearchWord: (word: string) => void; getMeaning: () => void }) {
+function Search({
+  setSearchWord,
+  getMeaning,
+}: {
+  setSearchWord: (word: string) => void;
+  getMeaning: () => void;
+}) {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      getMeaning();
+    }
+  };
+
   return (
     <div className="searchBox">
-      {/* Taking user input */}
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Find your word..."
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          // Specify event type
           setSearchWord(e.target.value);
         }}
+        onKeyDown={handleKeyDown}
       />
       <button
         onClick={() => {
           getMeaning();
         }}
       >
-        <FaSearch size="20px" />
+        <FaSearch size="22px" />
       </button>
     </div>
   );
