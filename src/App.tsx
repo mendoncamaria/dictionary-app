@@ -1,13 +1,13 @@
 import { useState, type JSX } from 'react';
 import Axios from 'axios';
 import './App.css';
-import { FcSpeaker } from 'react-icons/fc';
+import { IoVolumeHighOutline } from 'react-icons/io5';
 import Search from './components/Search';
 
-// Define interfaces for the API response structure
 interface Definition {
+  length: number;
   definition: string;
-  example?: string; // example is optional
+  example?: string;
 }
 
 interface Meaning {
@@ -16,7 +16,7 @@ interface Meaning {
 }
 
 interface Phonetic {
-  text?: string; // text is optional
+  text?: string;
   audio: string;
 }
 
@@ -25,7 +25,7 @@ interface DictionaryData {
   phonetics: Phonetic[];
   meanings: Meaning[];
 }
-// Specify the expected response type for Axios
+
 function App(): JSX.Element {
   const [data, setData] = useState<DictionaryData | null>(null);
   const [searchWord, setSearchWord] = useState<string>('');
@@ -38,67 +38,100 @@ function App(): JSX.Element {
         if (response.data && response.data.length > 0) {
           setData(response.data[0]);
         } else {
-          setData(null); // Clear data if no results are found
+          // You might want a state for "No Results Found" here
+          setData(null);
         }
       })
       .catch((error) => {
         console.error('Error fetching dictionary data:', error);
-        setData(null); // Clear data on error
+        // You might want a state for "Error" here
+        setData(null);
       });
   }
 
-  // Function to play and listen the
-  // phonetics of the searched word
+  // Updated function to find the best audio file
   function playAudio(): void {
-    // Specify return type as void
-    if (
-      data?.phonetics &&
-      data.phonetics.length > 0 &&
-      data.phonetics[0].audio
-    ) {
-      const audio = new Audio(data.phonetics[0].audio);
+    const audioUrl = data?.phonetics.find((p) => p.audio)?.audio;
+    if (audioUrl) {
+      const audio = new Audio(audioUrl);
       audio.play();
     }
   }
 
   return (
     <div className="App">
-      <h1>Free Dictionary</h1>
-      <Search setSearchWord={setSearchWord} getMeaning={getMeaning} />
-      {data && ( // Render only if data is not null
-        <div className="showResults">
-          <h2>
-            {data.word}{' '}
-            <button
-              onClick={() => {
-                playAudio();
-              }}
-            >
-              <FcSpeaker size="26px" />
-            </button>
-          </h2>
-          {data.meanings.length > 0 && ( // Check if meanings exist
-            <>
-              <h4>Parts of speech:</h4>
-              <p>{data.meanings[0].partOfSpeech}</p>
-
-              {data.meanings[0].definitions.length > 0 && ( // Check if definitions exist
-                <>
-                  <h4>Definition:</h4>
-                  <p>{data.meanings[0].definitions[0].definition}</p>
-
-                  {data.meanings[0].definitions[0].example && ( // Render example only if it exists
-                    <>
-                      <h4>Example:</h4>
-                      <p>{data.meanings[0].definitions[0].example}</p>
-                    </>
-                  )}
-                </>
+      <div className="card">
+        <h1>My Mini Dictionary</h1>
+        <Search setSearchWord={setSearchWord} getMeaning={getMeaning} />
+        {data ? (
+          <div className="showResults">
+            <div className="main-word">
+              {data.word}
+              {data.phonetics.some((p) => p.audio) && (
+                <button
+                  onClick={playAudio}
+                  aria-label={`Listen to pronunciation of ${data.word}`}
+                >
+                  <IoVolumeHighOutline size="28px" color="#708A9E" />
+                </button>
               )}
-            </>
-          )}
-        </div>
-      )}
+              {data.meanings.length > 0 && (
+                <span className="part-of-speech-tag">
+                  {data.meanings[0].partOfSpeech}
+                </span>
+              )}
+            </div>
+
+            {/* Phonetic Text */}
+            {data.phonetics.length > 0 &&
+              data.phonetics.find((p) => p.text) && (
+                <p className="phonetics">
+                  {data.phonetics.find((p) => p.text)?.text}
+                </p>
+              )}
+
+            {/* Meanings Loop */}
+            {data.meanings.map((meaning, meaningIndex) => (
+              // Only render the first meaning's tag here, as it's cleaner
+              <div key={meaningIndex}>
+                {/* Render a tag for subsequent meanings if needed, otherwise skip */}
+                {meaningIndex > 0 && (
+                  <h4 className="section-heading">{meaning.partOfSpeech}</h4>
+                )}
+
+                {meaning.definitions.map((def, defIndex) => (
+                  <div key={defIndex} className="definition-block">
+                    <h4 className="section-heading">
+                      Definition {def.length === 1 ? null : defIndex + 1}:
+                    </h4>
+                    <p>{def.definition}</p>
+
+                    {def.example && (
+                      <>
+                        <h4 className="section-heading">Example:</h4>
+                        <p className="example-text">
+                          {/* Use italics for example text */}
+                          "{def.example}"
+                        </p>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : (
+          // Display a message when no data is found or before search
+          <div className="showResults">
+            <h4
+              className="section-heading"
+              style={{ textAlign: 'center', marginTop: '50px' }}
+            >
+              Start searching to find your word!
+            </h4>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
