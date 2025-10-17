@@ -63,6 +63,14 @@ h1 {
   margin-top: 7px;
 }
 
+.error-message {
+  color: #d10606; /* Darker, professional text */
+  font-weight: 700;
+  font-size: 1.1em;
+  margin-bottom: 5px;
+  margin-top: 7px;
+}
+
 p {
   margin: 5px 0 10px 0;
   line-height: 1.6;
