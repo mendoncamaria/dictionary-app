@@ -19,7 +19,7 @@ function Search({
         type="text"
         placeholder="Find your word..."
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          setSearchWord(e.target.value);
+          setSearchWord(e.target.value.toLowerCase());
         }}
         onKeyDown={handleKeyDown}
       />

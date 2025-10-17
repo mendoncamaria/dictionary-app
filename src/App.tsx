@@ -28,6 +28,8 @@ interface DictionaryData {
 
 function App(): JSX.Element {
   const [data, setData] = useState<DictionaryData | null>(null);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [searchWord, setSearchWord] = useState<string>('');
 
   function getMeaning(): void {
@@ -39,12 +41,14 @@ function App(): JSX.Element {
           setData(response.data[0]);
         } else {
           // You might want a state for "No Results Found" here
-          setData(null);
+          setData('no results found' as unknown as DictionaryData);
         }
       })
       .catch((error) => {
-        console.error('Error fetching dictionary data:', error);
+        console.log('Error fetching dictionary data:', error);
         // You might want a state for "Error" here
+        setIsError(true);
+        setErrorMessage(error.message);
         setData(null);
       });
   }
@@ -110,8 +114,7 @@ function App(): JSX.Element {
                       <>
                         <h4 className="section-heading">Example:</h4>
                         <p className="example-text">
-                          {/* Use italics for example text */}
-                          "{def.example}"
+                          {/* Use italics for example text */}"{def.example}"
                         </p>
                       </>
                     )}
@@ -120,8 +123,16 @@ function App(): JSX.Element {
               </div>
             ))}
           </div>
+        ) : isError ? (
+          <div className="showResults">
+            <h3
+              className="error-message"
+              style={{ textAlign: 'center', marginTop: '50px' }}
+            >
+              {errorMessage}
+            </h3>
+          </div>
         ) : (
-          // Display a message when no data is found or before search
           <div className="showResults">
             <h4
               className="section-heading"
