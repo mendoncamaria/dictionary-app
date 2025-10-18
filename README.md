@@ -18,6 +18,7 @@
 
 ## 💡 About The Project
 ### Built With  🛠️
+Vite + Typescript
 ## Getting Started
 ### Prerequisites
 ### Installation
