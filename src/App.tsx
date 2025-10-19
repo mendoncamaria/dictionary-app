@@ -4,40 +4,23 @@ import './App.css';
 import { IoVolumeHighOutline } from 'react-icons/io5';
 import Search from './components/Search';
 import { STRINGS } from './utils/StringConstants';
-
-interface Definition {
-  length: number;
-  definition: string;
-  example?: string;
-}
-
-interface Meaning {
-  partOfSpeech: string;
-  definitions: Definition[];
-}
-
-interface Phonetic {
-  text?: string;
-  audio: string;
-}
-
-interface DictionaryData {
-  word: string;
-  phonetics: Phonetic[];
-  meanings: Meaning[];
-}
+import { playAudio } from './utils/Utility';
+import type { DictionaryData } from './types/DictionaryTypes';
 
 function App(): JSX.Element {
   const [data, setData] = useState<DictionaryData | null>(null);
   const [isError, setIsError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [searchWord, setSearchWord] = useState<string>('');
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   function getMeaning(): void {
+    setLoading(true);
     Axios.get<DictionaryData[]>(
       `https://api.dictionaryapi.dev/api/v2/entries/en_US/${searchWord}`
     )
       .then((response) => {
+        setLoading(false);
         if (response.data && response.data.length > 0) {
           setData(response.data[0]);
         } else {
@@ -45,6 +28,7 @@ function App(): JSX.Element {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.log(STRINGS.ERROR_CONSOLE, error);
         setIsError(true);
         setErrorMessage(error.message ?? STRINGS.ERROR_MESSAGE);
@@ -52,27 +36,19 @@ function App(): JSX.Element {
       });
   }
 
-  // Updated function to find the best audio file
-  function playAudio(): void {
-    const audioUrl = data?.phonetics.find((p) => p.audio)?.audio;
-    if (audioUrl) {
-      const audio = new Audio(audioUrl);
-      audio.play();
-    }
-  }
 
   return (
     <div className="App">
       <div className="card">
         <h1>{STRINGS.HEADER_TEXT}</h1>
-        <Search setSearchWord={setSearchWord} getMeaning={getMeaning} />
+        <Search setSearchWord={setSearchWord} getMeaning={getMeaning} isLoading={isLoading} />
         {data ? (
           <div className="showResults">
             <div className="main-word">
               {data.word}
               {data.phonetics.some((p) => p.audio) && (
                 <button
-                  onClick={playAudio}
+                  onClick={playAudio.bind(null, data)}
                   aria-label={`Listen to pronunciation of ${data.word}`}
                 >
                   <IoVolumeHighOutline size="28px" color="#708A9E" />

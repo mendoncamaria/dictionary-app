@@ -122,13 +122,11 @@ p {
 }
 
 .searchBox > button {
-  /* Muted Teal/Blue-Gray for the button */
   background-color: #708a9e;
-  height: 54px; /* Match input height */
+  height: 54px; 
   width: 60px;
   border: none;
   color: white;
-  /* Removing the harsh box-shadow for a cleaner look */
   box-shadow: none;
   cursor: pointer;
   padding: 0;
@@ -142,12 +140,14 @@ p {
 .searchBox > button:hover {
   background-color: #5a7183;
 }
+.searchBox > button:disabled {
+  background-color: #474f55;
+}
 
 /* --- Results Styles --- */
 
 .showResults {
-  width: 100%; /* Take up the full width of the card */
-  /* Remove width: 500px, which was restrictive */
+  width: 100%;
 }
 
 .showResults > .main-word > button {
@@ -160,13 +160,13 @@ p {
 
 /* Styling for individual definition blocks (the light gray 'cards') */
 .definition-block {
-  background-color: #f9f9f9; /* Very light gray for subtle separation */
+  background-color: #f9f9f9; 
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 15px;
-  border-left: 4px solid #f0a794; /* A little accent line */
+  border-left: 4px solid #f0a794; 
 }
 
 .definition-block p:last-child {
-  margin-bottom: 0; /* Clean up bottom spacing */
+  margin-bottom: 0;
 }
