@@ -1,11 +1,14 @@
 import { FaSearch } from 'react-icons/fa';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 function Search({
   setSearchWord,
   getMeaning,
+  isLoading,
 }: {
   setSearchWord: (word: string) => void;
   getMeaning: () => void;
+  isLoading: boolean;
 }) {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -27,8 +30,13 @@ function Search({
         onClick={() => {
           getMeaning();
         }}
+        disabled={isLoading}
       >
-        <FaSearch size="22px" />
+        {isLoading ? (
+          <AiOutlineLoading3Quarters className="loading-icon" size="22px" />
+        ) : (
+          <FaSearch size="22px" />
+        )}
       </button>
     </div>
   );
