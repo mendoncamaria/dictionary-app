@@ -3,6 +3,7 @@ import Axios from 'axios';
 import './App.css';
 import { IoVolumeHighOutline } from 'react-icons/io5';
 import Search from './components/Search';
+import { STRINGS } from './utils/StringConstants';
 
 interface Definition {
   length: number;
@@ -40,15 +41,13 @@ function App(): JSX.Element {
         if (response.data && response.data.length > 0) {
           setData(response.data[0]);
         } else {
-          // You might want a state for "No Results Found" here
-          setData('no results found' as unknown as DictionaryData);
+          setErrorMessage(STRINGS.ERROR_MESSAGE);
         }
       })
       .catch((error) => {
-        console.log('Error fetching dictionary data:', error);
-        // You might want a state for "Error" here
+        console.log(STRINGS.ERROR_CONSOLE, error);
         setIsError(true);
-        setErrorMessage(error.message);
+        setErrorMessage(error.message ?? STRINGS.ERROR_MESSAGE);
         setData(null);
       });
   }
@@ -65,7 +64,7 @@ function App(): JSX.Element {
   return (
     <div className="App">
       <div className="card">
-        <h1>My Mini Dictionary</h1>
+        <h1>{STRINGS.HEADER_TEXT}</h1>
         <Search setSearchWord={setSearchWord} getMeaning={getMeaning} />
         {data ? (
           <div className="showResults">
@@ -96,9 +95,7 @@ function App(): JSX.Element {
 
             {/* Meanings Loop */}
             {data.meanings.map((meaning, meaningIndex) => (
-              // Only render the first meaning's tag here, as it's cleaner
               <div key={meaningIndex}>
-                {/* Render a tag for subsequent meanings if needed, otherwise skip */}
                 {meaningIndex > 0 && (
                   <h4 className="section-heading">{meaning.partOfSpeech}</h4>
                 )}
@@ -106,15 +103,15 @@ function App(): JSX.Element {
                 {meaning.definitions.map((def, defIndex) => (
                   <div key={defIndex} className="definition-block">
                     <h4 className="section-heading">
-                      Definition {def.length === 1 ? null : defIndex + 1}:
+                      {STRINGS.DEFINITION} {def.length === 1 ? null : defIndex + 1}:
                     </h4>
                     <p>{def.definition}</p>
 
                     {def.example && (
                       <>
-                        <h4 className="section-heading">Example:</h4>
+                        <h4 className="section-heading">{STRINGS.EXAMPLE}</h4>
                         <p className="example-text">
-                          {/* Use italics for example text */}"{def.example}"
+                          <i>"{def.example}"</i>
                         </p>
                       </>
                     )}
@@ -138,7 +135,7 @@ function App(): JSX.Element {
               className="section-heading"
               style={{ textAlign: 'center', marginTop: '50px' }}
             >
-              Start searching to find your word!
+              {STRINGS.START_SEARCHING}
             </h4>
           </div>
         )}
