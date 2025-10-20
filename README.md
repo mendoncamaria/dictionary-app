@@ -1,4 +1,4 @@
-## dictionary
+## MY MINI DICTIONARY
 
 
 ### **Table of Contents**
