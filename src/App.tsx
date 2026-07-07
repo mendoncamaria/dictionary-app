@@ -6,6 +6,7 @@ import Search from './components/Search';
 import { STRINGS } from './utils/StringConstants';
 import { playAudio } from './utils/Utility';
 import type { DictionaryData } from './types/DictionaryTypes';
+import { GetErrorMessage } from './components/Error';
 
 function App(): JSX.Element {
   const [data, setData] = useState<DictionaryData | null>(null);
@@ -31,7 +32,7 @@ function App(): JSX.Element {
         setLoading(false);
         console.log(STRINGS.ERROR_CONSOLE, error);
         setIsError(true);
-        setErrorMessage(error.message ?? STRINGS.ERROR_MESSAGE);
+        setErrorMessage(`${error.response.data.message} ${error.response.data.resolution}`);
         setData(null);
       });
   }
@@ -97,14 +98,7 @@ function App(): JSX.Element {
             ))}
           </div>
         ) : isError ? (
-          <div className="showResults">
-            <h3
-              className="error-message"
-              style={{ textAlign: 'center', marginTop: '50px' }}
-            >
-              {errorMessage}
-            </h3>
-          </div>
+         <GetErrorMessage errorMessage={errorMessage} />
         ) : (
           <div className="showResults">
             <h4
